@@ -86,6 +86,12 @@ class BoxerState:
     JABBING = 1
     PULLING = 2
 
+    TRANSITIONS = {
+        IDLE: (JABBING, PULLING),
+        JABBING: (IDLE, ),
+        PULLING: (IDLE, )
+    }
+
     def __init__(self):
         self.current = BoxerState.IDLE
         self.current_state_duration = 0
@@ -106,24 +112,9 @@ class BoxerState:
         if self.current == new_state:
             return False
 
-        if self.current == BoxerState.IDLE:
-            if new_state == BoxerState.JABBING:
-                self.current = BoxerState.JABBING
-                return True
-
-            if new_state == BoxerState.PULLING:
-                self.current = BoxerState.PULLING
-                return True
-
-        if self.current == BoxerState.JABBING:
-            if new_state == BoxerState.IDLE:
-                self.current = BoxerState.IDLE
-                return True
-
-        if self.current == BoxerState.PULLING:
-            if new_state == BoxerState.IDLE:
-                self.current = BoxerState.IDLE
-                return True
+        if new_state in self.TRANSITIONS[self.current]:
+            self.current = new_state
+            return True
 
         return False
 
